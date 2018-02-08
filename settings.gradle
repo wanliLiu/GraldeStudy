@@ -1,12 +1,16 @@
+include ':app'
+
 def test() {
     println "------------最先开始执行settings.gralde------------"
     print "项目根目录:"
     print(rootDir.absolutePath)
     println "\nNext-->"
     def aList = [5, 'String', true, 323.0f]
-    aList.each {
-        print it
-    }
+
+    println aList
+//    aList.each {
+//        print it
+//    }
 
     File propFile = new File(rootDir.getAbsolutePath() + "/local.properties")
     if (propFile.exists()) {
@@ -17,6 +21,42 @@ def test() {
     }
 }
 
-include ':app'
+
 test()
 
+def defaultIt() {
+    println "--------------执行三次"
+    3.times {
+        println it
+    }
+}
+
+defaultIt()
+
+def closureObj() {
+    println "--------------closure 闭包 call"
+    def obj = { a ->
+        ++a
+    }
+
+    println obj.call(1000)
+    def p1 = new People()
+    def p2 = new People(name: "名字", age: 23)
+    def p3 = new People("dskldks")
+    println "There is a People name is ${p2.name} and age is $p2.age"
+}
+
+closureObj()
+
+class People {
+    String name
+    int age
+
+    People() {
+    }
+
+    People(String name, int age = 1) {
+        this.name = name
+        this.age = age
+    }
+}
