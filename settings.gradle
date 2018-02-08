@@ -1,0 +1,22 @@
+def test() {
+    println "------------最先开始执行settings.gralde------------"
+    print "项目根目录:"
+    print(rootDir.absolutePath)
+    println "\nNext-->"
+    def aList = [5, 'String', true, 323.0f]
+    aList.each {
+        print it
+    }
+
+    File propFile = new File(rootDir.getAbsolutePath() + "/local.properties")
+    if (propFile.exists()) {
+        Properties properties = new Properties()
+        properties.load(propFile.newDataInputStream())
+        println(properties.getProperty("ndk.dir"))
+        println(properties.getProperty("sdk.dir"))
+    }
+}
+
+include ':app'
+test()
+

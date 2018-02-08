@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
+    defaultConfig {
+        applicationId "com.soli.gradlestudy"
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        resourcePrefix "test_"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        def mergedFlavor = variant.mergedFlavor
+        mergedFlavor.manifestPlaceholders = [HostNme: "www.example.com/${variant.versionName}"]
+        variant.outputs.all { output ->
+            outputFileName = "Your_Apk_name_" + variant.name + "_" + variant.versionName + ".apk"
+        }
+    }
+
+    packagingOptions {
+        exclude "/testing-data/**"
+    }
+
+    // Specifies the flavor dimensions you want to use. The order in which you
+    // list each dimension determines its priority, from highest to lowest,
+    // when Gradle merges variant sources and configurations. You must assign
+    // each product flavor you configure to one of the flavor dimensions.
+    flavorDimensions 'two', 'one'
+
+    productFlavors {
+        demo {
+            // Assigns this product flavor to the 'version' flavor dimension.
+            dimension 'one'
+        }
+
+        full {
+            dimension 'two'
+        }
+
+        minApi24 {
+            // Assigns this flavor to the 'api' dimension.
+            dimension 'one'
+            minSdkVersion '24'
+            versionNameSuffix "-minApi24"
+        }
+
+        minApi21 {
+            dimension "one"
+            minSdkVersion '21'
+            versionNameSuffix "-minApi21"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+task World << {
+    println "World"
+}
+
+task hello {
+    doLast {
+        println("Hello")
+    }
+}
+
+task intro(dependsOn: hello, description: "我是这个Task的描述信息") << {
+    println "intro"
+}
+

@@ -1,0 +1,28 @@
+/**
+ * 从AndroidManifest.xml里获取信息
+ */
+def getVersionNameAdvanced() {
+    def xmlFile = project.file("AndroidManifest.xml")
+    def rootManifest = new XmlSlurper().parse(xmlFile)
+
+    return rootManifest['@android:versionName']
+}
+/**
+ *
+ * @return
+ */
+def disableDebugBuild() {
+    def targetTasks = project.tasks.findAll { task ->
+        task.name.contains("Debug")
+    }
+
+    targetTasks.each {
+        println "Disable debug task : ${it.name}"
+        it.setEnabled(false)
+    }
+}
+
+ext {
+    getVersionNameAdvanced = this.&getVersionNameAdvanced
+    disableDebugBuild = this.&disableDebugBuild
+}
