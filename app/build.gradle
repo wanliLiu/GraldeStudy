@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+//统计task时间
+apply plugin: "build-time-tracker"
 
 android {
     compileSdkVersion 27
@@ -77,6 +79,27 @@ dependencies {
 
 }
 
+
+buildtimetracker {
+    reporters {
+        csv {
+            output "build/times.csv"
+            append true
+            header false
+        }
+
+        summary {
+            ordered false
+            threshold 50
+            barstyle "unicode"
+        }
+
+        csvSummary {
+            csv "build/times.csv"
+        }
+    }
+}
+
 task World << {
     println "World"
 }
@@ -91,3 +114,44 @@ task intro(dependsOn: hello, description: "我是这个Task的描述信息") << 
     println "intro"
 }
 
+//统计每个任务执行的时间
+class TimingsListener implements TaskExecutionListener, BuildListener {
+    private long clock
+    private timings = []
+
+    @Override
+    void beforeExecute(Task task) {
+        clock = System.currentTimeMillis()
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState taskState) {
+        def ms = System.currentTimeMillis() - clock
+        timings.add([ms, task.path])
+        task.project.logger.warn "${task.path} took ${ms}ms"
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+        println "Task timings:"
+        for (timing in timings) {
+//            if (timing[0] >= 50) {
+                printf "%7sms  %s\n", timing
+//            }
+        }
+    }
+
+    @Override
+    void buildStarted(Gradle gradle) {}
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {}
+
+    @Override
+    void projectsLoaded(Gradle gradle) {}
+
+    @Override
+    void settingsEvaluated(Settings settings) {}
+}
+
+gradle.addListener new TimingsListener()

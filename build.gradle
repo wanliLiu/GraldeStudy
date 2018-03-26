@@ -5,13 +5,21 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
+    //打印脚本花的时间
+    repositories.each{
+        println it.getUrl()
+    }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.11.+"
     }
 
     apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
@@ -21,6 +29,14 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+    }
+
+    //默认依赖的远程包每次build都更新
+    configurations.all {
+        // check for updates every build
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
 }
 
