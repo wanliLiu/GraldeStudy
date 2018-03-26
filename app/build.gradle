@@ -3,6 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //统计task时间
 apply plugin: "build-time-tracker"
+apply plugin: "soli.plugin"
+
+buildscript {
+    repositories {
+        maven {
+            url uri('../repo')
+        }
+    }
+    dependencies {
+        classpath "com.soli.plugin:myplugin:0.0.1"
+    }
+}
 
 android {
     compileSdkVersion 27
