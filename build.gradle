@@ -21,8 +21,6 @@ buildscript {
 
         classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.11.+"
     }
-
-    apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
 }
 
 allprojects {
@@ -32,12 +30,12 @@ allprojects {
         mavenCentral()
     }
 
-    //默认依赖的远程包每次build都更新
-    configurations.all {
-        // check for updates every build
-        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    }
+//    //默认依赖的远程包每次build都更新
+//    configurations.all {
+//        // check for updates every build
+//        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+//        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//    }
 }
 
 task clean(type: Delete) {

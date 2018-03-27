@@ -3,18 +3,59 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 //统计task时间
 apply plugin: "build-time-tracker"
-apply plugin: "soli.plugin"
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd hh:mm:ss", TimeZone.getTimeZone("UTC"))
+}
 
 buildscript {
+    //打印脚本花的时间
+    repositories.each {
+        println it.getUrl()
+    }
+
     repositories {
         maven {
             url uri('../repo')
         }
     }
     dependencies {
-        classpath "com.soli.plugin:myplugin:0.0.1"
+        if (canUsePlugin.toBoolean())
+            classpath "com.soli.plugin:myplugin:0.0.1"
     }
 }
+
+//自定义插件使用
+if (canUsePlugin.toBoolean()) {
+    apply plugin: "soli.plugin"
+//自定义插件数据获取
+    pluginExt {
+        param1 = "我都是  圣诞快乐"
+        param2 = "什么 odsldk"
+        nestExt {
+            nestParams1 = "号的打开塑料袋 "
+            nestParams2 = "dks"
+            other {
+                url = "www.baidu.com"
+            }
+        }
+    }
+
+    ClosureInput {
+        user = "soli"
+        pkg {
+            repo = "www.facebook.com"
+            userOrg = "maven"
+            version {
+                name = "facebook"
+                desc = "闭包方式传入嵌套参数  一般都把一个参数写入到一个类中"
+                released = releaseTime()
+                vcsTag = "dsl"
+            }
+        }
+    }
+}
+
 
 android {
     compileSdkVersion 27
@@ -24,7 +65,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0-SNAPSHOT"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         resourcePrefix "test_"
@@ -122,48 +163,8 @@ task hello {
     }
 }
 
+apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
 task intro(dependsOn: hello, description: "我是这个Task的描述信息") << {
     println "intro"
+    println("Utls.gradle 的值-----${project.ext.getVersionNameAdvanced}")
 }
-
-//统计每个任务执行的时间
-class TimingsListener implements TaskExecutionListener, BuildListener {
-    private long clock
-    private timings = []
-
-    @Override
-    void beforeExecute(Task task) {
-        clock = System.currentTimeMillis()
-    }
-
-    @Override
-    void afterExecute(Task task, TaskState taskState) {
-        def ms = System.currentTimeMillis() - clock
-        timings.add([ms, task.path])
-        task.project.logger.warn "${task.path} took ${ms}ms"
-    }
-
-    @Override
-    void buildFinished(BuildResult result) {
-        println "Task timings:"
-        for (timing in timings) {
-//            if (timing[0] >= 50) {
-                printf "%7sms  %s\n", timing
-//            }
-        }
-    }
-
-    @Override
-    void buildStarted(Gradle gradle) {}
-
-    @Override
-    void projectsEvaluated(Gradle gradle) {}
-
-    @Override
-    void projectsLoaded(Gradle gradle) {}
-
-    @Override
-    void settingsEvaluated(Settings settings) {}
-}
-
-gradle.addListener new TimingsListener()
