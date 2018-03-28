@@ -1,5 +1,7 @@
 package com.soli.myplugin
 
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.AppPlugin
 import org.gradle.BuildListener
 import org.gradle.BuildResult
 import org.gradle.api.*
@@ -75,6 +77,14 @@ public class PluginImpl implements Plugin<Project> {
 //            println("121212----------------------------通过Project Closure来获取嵌套的参数输入")
 //            println("输入的参数：${closureExtension.toString()}")
 //        }
+
+        def isApp = project.plugins.hasPlugin(AppPlugin)
+        if (isApp){
+            println("==================$project.name transformAPI===============")
+            def android = project.extensions.findByType(AppExtension)
+            def transformImpl = new MyClassTransform(project)
+            android.registerTransform(transformImpl)
+        }
     }
     /**
      *
