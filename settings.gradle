@@ -3,9 +3,6 @@ include ':app', ':myplugin'
 println "还没有学习-----------------------------------------------------"
 println "AutoRegister-----------------------------------------------------"
 println "https://juejin.im/post/5a2b95b96fb9a045284669a9"
-println "Gradle插件学习\n" +
-        "http://jiajixin.cn/2015/08/07/gradle-android/\n" +
-        "https://blog.csdn.net/sbsujjbcy/article/details/50782830"
 println "-----------------------------------------------------"
 println "建立企业内部maven服务器并使用Android Studio发布公共项目\n" +
         "https://blog.csdn.net/qinxiandiqi/article/details/44458707"

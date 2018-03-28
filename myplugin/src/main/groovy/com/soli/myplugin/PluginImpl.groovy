@@ -2,11 +2,7 @@ package com.soli.myplugin
 
 import org.gradle.BuildListener
 import org.gradle.BuildResult
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.ProjectEvaluationListener
-import org.gradle.api.ProjectState
-import org.gradle.api.Task
+import org.gradle.api.*
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
