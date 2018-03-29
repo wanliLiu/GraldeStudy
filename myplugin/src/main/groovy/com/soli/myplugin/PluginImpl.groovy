@@ -79,17 +79,53 @@ public class PluginImpl implements Plugin<Project> {
 //        }
 
         def isApp = project.plugins.hasPlugin(AppPlugin)
-        if (isApp){
+        if (isApp) {
             println("==================$project.name transformAPI===============")
             def android = project.extensions.findByType(AppExtension)
             def transformImpl = new MyClassTransform(project)
             android.registerTransform(transformImpl)
+
+            android.applicationVariants.all { variant ->
+                //获取到scope,作用域
+                def variantData = variant.variantData
+                def scope = variantData.scope
+                //拿到build.gradle中创建的Extension的值
+                def config = project.extensions.findByName("pluginExt")
+                //创建一个task
+                def createTaskName = scope.getTaskName("CeShi", "MyTestPlugin")
+                def createTask = project.task(createTaskName)
+                createTask << {
+                    createJavaTest(variant, config)
+                }
+                //设置task依赖于生成BuildConfig的task，然后在生成BuildConfig后生成我们的类
+                String generateBuildConfigTaskName = variant.getVariantData().getScope().getGenerateBuildConfigTask().name
+                def generateBuildConfigTask = project.tasks.getByName(generateBuildConfigTaskName)
+                if (generateBuildConfigTask) {
+                    createTask.dependsOn generateBuildConfigTask
+                    generateBuildConfigTask.finalizedBy createTask
+                }
+            }
         }
+    }
+
+    static def createJavaTest(variant, config) {
+        //要生成的内容
+        def content = "package com.soli.gradlestudy;\n" +
+                " /**\n" +
+                "   * Created by Soli on 2018/3/29.\n" +
+                "   */\n" +
+                " public class MyPlguinTestClass {\n" +
+                " \tpublic static final String param1 = \"${config.param1}\";\n" +
+                " }"
+        //获取到BuildConfig类的路径
+        File outputDir = variant.getVariantData().getScope().getBuildConfigSourceOutputDir()
+        def javaFile = new File(outputDir, "MyPluginTestClass.java")
+        javaFile.write(content, javaFile)
     }
     /**
      *
      */
-    class projectEvalu implements ProjectEvaluationListener{
+    class projectEvalu implements ProjectEvaluationListener {
 
         private CloserExtension extension
 

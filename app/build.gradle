@@ -8,23 +8,6 @@ def releaseTime() {
     return new Date().format("yyyy-MM-dd hh:mm:ss", TimeZone.getTimeZone("UTC"))
 }
 
-buildscript {
-    //打印脚本花的时间
-    repositories.each {
-        println it.getUrl()
-    }
-
-    repositories {
-        maven {
-            url uri('../repo')
-        }
-    }
-    dependencies {
-        if (canUsePlugin.toBoolean())
-            classpath "com.soli.plugin:myplugin:0.0.1"
-    }
-}
-
 //自定义插件使用
 if (canUsePlugin.toBoolean()) {
     apply plugin: "soli.plugin"
@@ -72,9 +55,21 @@ android {
 
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+//        构建变体 > 构建类型[BuildType] > 产品风味[ProductFlavor] > 主源集[main] > 库依赖项
+//        【新创建的源集】可以覆盖【main源集】的资源。
+        typeOther.initWith(buildTypes.debug)
+        typeOther {
+            applicationIdSuffix ".typeOther"
+            jniDebuggable = true
+            versionNameSuffix ".other"
         }
     }
 
@@ -126,6 +121,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    implementation 'androidx.core:core-ktx:+'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

@@ -31,19 +31,20 @@ public class MyClassTransform extends Transform{
 
     @Override
     boolean isIncremental() {
-        return true
+        return false
     }
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation)
 
-        println("=================================================================")
-        println("transform{ context= ${transformInvocation.context}\n" +
-                "inputs=${transformInvocation.inputs}\n" +
-                "referencedInputs=${transformInvocation.referencedInputs}\n" +
-                "secondaryInputs=${transformInvocation.secondaryInputs}\n" +
-                "outputProvider=${transformInvocation.outputProvider}\n" +
+        println("自定义的TransFrom开始=================================================================")
+        println("transform{ context= \n${transformInvocation.context}\n" +
+                "inputs=\n${transformInvocation.inputs}\n" +
+                "referencedInputs=\n${transformInvocation.referencedInputs}\n" +
+                "secondaryInputs=\n${transformInvocation.secondaryInputs}\n" +
+                "outputProvider=\n${transformInvocation.outputProvider}\n" +
                 "incremental=${transformInvocation.incremental}")
+        println("自定义的TransFrom结束=================================================================")
     }
 }

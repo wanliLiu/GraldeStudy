@@ -6,6 +6,9 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url uri('repo')
+        }
     }
     //打印脚本花的时间
     repositories.each{
@@ -20,6 +23,9 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.11.+"
+
+        if (canUsePlugin.toBoolean())
+            classpath "com.soli.plugin:myplugin:0.0.1"
     }
 }
 
