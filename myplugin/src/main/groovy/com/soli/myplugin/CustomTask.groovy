@@ -4,7 +4,7 @@ import org.gradle.api.tasks.TaskAction
 /**
  * 定一个task
  */
-public class CustomTask extends DefaultTask {
+class CustomTask extends DefaultTask {
     static final String NAME = 'CustomTask'
 
     @TaskAction

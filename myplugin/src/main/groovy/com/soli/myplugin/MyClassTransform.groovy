@@ -5,11 +5,11 @@ import com.android.build.api.transform.TransformInvocation
 import com.android.build.gradle.internal.pipeline.TransformManager
 import org.gradle.api.Project
 
-public class MyClassTransform extends Transform{
+class MyClassTransform extends Transform {
 
     private Project project
 
-    public MyClassTransform(Project mProject){
+    public MyClassTransform(Project mProject) {
         this.project = mProject
     }
 

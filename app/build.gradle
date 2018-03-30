@@ -11,9 +11,9 @@ def releaseTime() {
 //自定义插件使用
 if (canUsePlugin.toBoolean()) {
     apply plugin: "soli.plugin"
-//自定义插件数据获取
+    //自定义插件数据获取
     pluginExt {
-        param1 = "我都是  圣诞快乐"
+        param1 = "项目组件模块化调研。针对后面的项目以及考虑到相关项目的后续迭代，人员变动、项目维护上等多方面原因，项目开发的模块化组件化必须提上议程，了解目前主流的组件实施方案，各种方案的优缺点，针对实际情况，考虑目前秀动项目以及将来的项目用那种方案来做，要思考的问题如果把秀动项目改造成模块组件方式，成本和风险有多大，应该采用那种实现方式来做？？？？新项目，从开始是否就用这种方式来做？？？？等等，还有一系列的问题要解决"
         param2 = "什么 odsldk"
         nestExt {
             nestParams1 = "号的打开塑料袋 "
@@ -51,8 +51,11 @@ android {
         versionName "1.0-SNAPSHOT"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        resourcePrefix "test_"
+//        多个module的时候，通过这个来避免资源冲突  但是就是每个资源id都要以这个开头
+//        resourcePrefix "test_"
 
+//        manifestPlaceholders 可以修改AndroidManifest.xml中格式为：${key}的内容
+//        manifestPlaceholders = [app_icon : "@mipmap/ic_launcher"]
     }
     buildTypes {
         debug {
