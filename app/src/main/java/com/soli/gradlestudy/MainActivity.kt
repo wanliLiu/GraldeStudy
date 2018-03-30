@@ -2,7 +2,6 @@ package com.soli.gradlestudy
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import androidx.view.isGone
 import androidx.view.isVisible
 import kotlinx.android.synthetic.main.activity_main.*
 

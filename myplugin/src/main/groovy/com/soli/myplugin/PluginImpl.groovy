@@ -86,8 +86,8 @@ class PluginImpl implements Plugin<Project> {
 
             println("==================$project.name transformAPI===============")
             def android = project.extensions.findByType(AppExtension)
-//            def transformImpl = new MyClassTransform(project)
-//            android.registerTransform(transformImpl)
+            def transformImpl = new MyClassTransform(project)
+            android.registerTransform(transformImpl)
 
             android.applicationVariants.all { variant ->
                 println("$variant.applicationId-----------------variants:$variant.name")

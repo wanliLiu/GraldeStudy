@@ -6,12 +6,7 @@ dependencies{
     compile localGroovy()
 
     compile 'com.android.tools.build:gradle:3.0.1'
-//    compile 'com.android.tools.build:transform-api:2.0.0'
-//    compile 'javassist:javassist:3.22.0-GA'
-}
-
-repositories{
-    mavenCentral()
+    compile 'javassist:javassist:3.12.1.GA'
 }
 
 task sourcesJar(type: Jar) {
