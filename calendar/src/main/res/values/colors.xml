@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="calendar_bg_color">#FFFFFF</color>
+    <color name="holiday_text_color">#9082BD</color>
+    <color name="colorBackground">#F0F1F5</color>
+
+    <color name="selected_text_color">#ef7b73</color>
+    <color name="selected_circle_color">#333333</color>
+
+
+    <dimen name="size_week_text_size">15sp</dimen>
+    <dimen name="size_day_text_siez">15sp</dimen>
+    <dimen name="size_day_lunar_text_siez">8sp</dimen>
+
+    <color name="color_week_text_color">#8CAFCA</color>
+    <color name="color_week_background">#FF0A426E</color>
+    <color name="normal_text_color">#333333</color>
+    <color name="hint_circle_color">#ED6D64</color>
+
+    <style name="styleWeekTitle">
+        <item name="text_color">@color/color_week_text_color</item>
+        <item name="text_size">@dimen/size_week_text_size</item>
+        <item name="android:background">@color/color_week_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+
+    <style name="styleCalendar">
+        <item name="selected_text_color">@color/selected_text_color</item>
+        <item name="selected_circle_color">@color/selected_circle_color</item>
+        <item name="selected_circle_today_color">@color/selected_circle_color</item>
+        <item name="normal_text_color">@color/normal_text_color</item>
+        <item name="today_text_color">#ed6d64</item>
+        <item name="hint_circle_color">@color/hint_circle_color</item>
+        <item name="day_text_size">@dimen/size_day_text_siez</item>
+    </style>
+
+</resources>

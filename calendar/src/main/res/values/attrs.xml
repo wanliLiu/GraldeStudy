@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="WeekBarView">
+        <attr name="text_color" format="color" />
+        <attr name="text_size" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CalendarView">
+        <attr name="selected_text_color" format="color" />
+        <attr name="selected_circle_color" format="color" />
+        <attr name="selected_circle_today_color" format="color" />
+        <attr name="normal_text_color" format="color" />
+        <attr name="today_text_color" format="color" />
+        <attr name="lunar_text_color" format="color" />
+        <attr name="hint_circle_color" format="color" />
+        <attr name="holiday_color" format="color" />
+        <attr name="last_or_next_text_color" format="color" />
+        <attr name="day_text_size" format="dimension" />
+        <attr name="day_lunar_text_size" format="dimension" />
+        <attr name="show_task_hint" format="boolean" />
+        <attr name="show_lunar" format="boolean" />
+        <attr name="show_holiday_hint" format="boolean" />
+        <attr name="count" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ScheduleLayout">
+        <attr name="default_view">
+            <enum name="month" value="0" />
+            <enum name="week" value="1" />
+        </attr>
+        <attr name="auto_change_month_row" format="boolean" />
+    </declare-styleable>
+
+</resources>

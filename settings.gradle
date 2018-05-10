@@ -1,4 +1,4 @@
-include ':app', ':myplugin'
+include ':app', ':myplugin', ':common' ,':calendar','CalendarApp'
 
 println "还没有学习-----------------------------------------------------"
 println "AutoRegister-----------------------------------------------------"

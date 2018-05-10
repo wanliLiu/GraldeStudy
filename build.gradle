@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -36,6 +36,13 @@ allprojects {
         mavenCentral()
     }
 
+    ext {
+        compile_sdk_version = 27
+        build_tools_version = '27.0.3'
+        min_sdk_version = 15
+        target_sdk_version = 27
+        support_library_version = '27.1.1'
+    }
 //    //默认依赖的远程包每次build都更新
 //    configurations.all {
 //        // check for updates every build
