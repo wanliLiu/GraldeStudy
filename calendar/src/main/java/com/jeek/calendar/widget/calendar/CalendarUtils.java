@@ -5,6 +5,8 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.LocalDate;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,22 +153,8 @@ public class CalendarUtils {
      * @return
      */
     public static int getMonthDays(int year, int month) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, 1);
-        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-    }
-
-    /**
-     * 周是从星期天开始还是星期一开始,根据语言自动切换,目前只测试过,周日和周一
-     *
-     * @param year
-     * @param month
-     * @return SUNDAY or MONDAY
-     */
-    public static int getFirstDayOfWeek(int year, int month) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, 1);
-        return calendar.getFirstDayOfWeek();
+        LocalDate date = new LocalDate(year,month + 1,1);
+        return date.dayOfMonth().getMaximumValue();
     }
 
     /**
