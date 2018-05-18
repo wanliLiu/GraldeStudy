@@ -1,6 +1,5 @@
 package com.jeek.calendar.widget.calendar;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -71,12 +70,7 @@ public abstract class BaseCalendarView extends View {
     }
 
     public BaseCalendarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    @TargetApi(21)
-    public BaseCalendarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+        super(context, attrs, defStyleAttr);
         init(context.obtainStyledAttributes(attrs, R.styleable.CalendarView));
     }
 
