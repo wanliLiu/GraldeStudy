@@ -23,12 +23,12 @@ public class MyInjects {
         //project.android.bootClasspath 加入android.jar，不然找不到android相关的所有类
         pool.insertClassPath(project.android.bootClasspath[0].toString())
         //AppCompatActivity
-        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.0.aar/c5f9b9afd2c30e21e9b7cc142f7b1e61/jars/classes.jar")
-        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.0.aar/969eff80804fc158faf654470daf699b/jars/classes.jar")
-        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.0.aar/a38b48c82f573c8e82895a88e83c2dfa/jars/classes.jar")
+        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/c5f9b9afd2c30e21e9b7cc142f7b1e61/jars/classes.jar")
+        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-fragment-27.1.1.aar/969eff80804fc158faf654470daf699b/jars/classes.jar")
+        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/a38b48c82f573c8e82895a88e83c2dfa/jars/classes.jar")
         pool.insertClassPath("/home/soli/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.0/edf3f7bfb84a7521d0599efa3b0113a0ee90f85/common-1.1.0.jar")
         pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/df0d2e289c6ec3851027412d87fbde3c/jars/classes.jar")
-        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.0.aar/6f96448d359647fff68216aeef064e9a/jars/classes.jar")
+        pool.insertClassPath("/home/soli/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/6f96448d359647fff68216aeef064e9a/jars/classes.jar")
         //引入android.os.Bundle包，因为onCreate方法参数有Bundle
         pool.importPackage("android.os.Bundle")
 

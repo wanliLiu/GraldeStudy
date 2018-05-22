@@ -1,9 +1,7 @@
 package com.soli.gradlestudy
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.activity_main.*
+import com.soli.gradlestudy.R.id.gradHello
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +16,6 @@ class MainActivity : AppCompatActivity() {
             gradHello.append("\nVisiable")
         }
 
-        gradHello.append("\n 通过Gradle 插件自动生成的类： ${MyPluginTestClass::class.java.name} \n 类的内容：${MyPluginTestClass.param1}")
+//        gradHello.append("\n 通过Gradle 插件自动生成的类： ${MyPluginTestClass::class.java.name} \n 类的内容：${MyPluginTestClass.param1}")
     }
 }

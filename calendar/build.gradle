@@ -20,8 +20,9 @@ android {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':common')
+    implementation "com.android.support:recyclerview-v7:${support_library_version}"
     api 'com.google.code.gson:gson:+'
     api 'joda-time:joda-time:+'
 }
