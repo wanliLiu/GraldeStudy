@@ -1,5 +1,6 @@
 package com.jeek.calendar.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,15 +26,17 @@ import com.jeek.calendar.adapter.EventSetAdapter;
 import com.jeek.calendar.fragment.EventSetFragment;
 import com.jeek.calendar.fragment.ScheduleFragment;
 import com.jeek.calendar.task.eventset.LoadEventSetTask;
-import com.jeek.calendar.widget.calendar.CalendarUtils;
 import com.jimmy.common.base.app.BaseActivity;
 import com.jimmy.common.base.app.BaseFragment;
 import com.jimmy.common.bean.EventSet;
 import com.jimmy.common.listener.OnTaskFinishedListener;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, OnTaskFinishedListener<List<EventSet>> {
 
@@ -56,10 +59,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String[] mMonthText;
     private int mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay;
 
+    private RxPermissions permissions;
+
     @Override
     protected void bindView() {
 
         setContentView(R.layout.activity_main);
+
+        permissions = new RxPermissions(this);
+        init();
+    }
+
+
+    private void permissionCheck() {
+        permissions.request(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (!aBoolean) {
+                            finish();
+                        }
+                    }
+                });
+    }
+
+    /**
+     *
+     */
+    private void init() {
+
         dlMain = searchViewById(R.id.dlMain);
         llTitleDate = searchViewById(R.id.llTitleDate);
         tvTitleMonth = searchViewById(R.id.tvTitleMonth);
@@ -67,16 +95,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         tvTitle = searchViewById(R.id.tvTitle);
         rvMenuEventSetList = searchViewById(R.id.rvMenuEventSetList);
 
-        List<Integer> integers = new ArrayList<>();
-        integers.add(1);
-        integers.add(2);
-        integers.add(3);
-        integers.add(4);
-        integers.add(5);
-        integers.add(6);
-        integers.add(7);
-        CalendarUtils.getInstance(this).addTaskHints(2018, 4, integers);
-        CalendarUtils.getInstance(this).addTaskHints(2018, 6, integers);
+//        List<Integer> integers = new ArrayList<>();
+//        integers.add(1);
+//        integers.add(2);
+//        integers.add(3);
+//        integers.add(4);
+//        integers.add(5);
+//        integers.add(6);
+//        integers.add(7);
+//        CalendarUtils.getInstance(this).addTaskHints(2018, 4, integers);
+//        CalendarUtils.getInstance(this).addTaskHints(2018, 6, integers);
 
 
         searchViewById(R.id.ivMainMenu).setOnClickListener(this);
@@ -126,6 +154,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void initData() {
         super.initData();
+
+        permissionCheck();
+
         resetMainTitleDate(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
         new LoadEventSetTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

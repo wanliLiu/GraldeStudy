@@ -26,4 +26,5 @@ dependencies {
     implementation project(':calendar')
     implementation 'com.facebook.fresco:stetho:1.9.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.tbruyelle.rxpermissions2:rxpermissions:0.9.5"
 }

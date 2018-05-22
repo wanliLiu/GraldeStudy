@@ -9,10 +9,11 @@ import android.util.AttributeSet;
 
 import com.jeek.calendar.widget.calendar.BaseCalendarView;
 import com.jeek.calendar.widget.calendar.CalendarUtils;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.LunarCalendarUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by Jimmy on 2016/10/6 0006.
@@ -87,19 +88,6 @@ public class MonthView extends BaseCalendarView {
 
         initMonth();
         initTaskHint();
-    }
-
-    /**
-     *
-     */
-    private void initTaskHint() {
-        if (mIsShowHint) {
-            // 从数据库中获取圆点提示数据
-            // TODO: 18-5-9 这里实际要去掉,因为具体的事件标记逻辑不一样
-            // TODO: 18-5-9 实际根据情况添加事件数据到 addTaskHints
-//            ScheduleDao dao = ScheduleDao.getInstance(getContext());
-//            CalendarUtils.getInstance(getContext()).addTaskHints(mSelYear, mSelMonth, dao.getTaskHintByMonth(mSelYear, mSelMonth));
-        }
     }
 
 
@@ -405,13 +393,14 @@ public class MonthView extends BaseCalendarView {
      */
     private void drawHintCircle(Canvas canvas) {
         if (mIsShowHint) {
-            List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mSelYear, mSelMonth);
-            if (hints.size() > 0) {
+            if (mEventDayList != null && mEventDayList.size() > 0) {
                 mPaint.setColor(mHintCircleColor);
                 int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
                 int dayoffset = CalendarUtils.findDayOffset(CalendarUtils.getFirstDayWeek(mSelYear, mSelMonth));
                 for (int day = 0; day < monthDays; day++) {
-                    if (!hints.contains(day + 1)) continue;
+                    ArrayList<Event> list = mEventDayList.get(day);
+                    if (list == null || list.size() == 0)
+                        continue;
                     int col = (day + dayoffset) % NUM_COLUMNS;
                     int row = (day + dayoffset) / NUM_COLUMNS;
                     float circleX = (float) (mColumnSize * col + mColumnSize * 0.5);
@@ -419,6 +408,20 @@ public class MonthView extends BaseCalendarView {
                     canvas.drawCircle(circleX, circleY, mCircleRadius, mPaint);
                 }
             }
+//            List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mSelYear, mSelMonth);
+//            if (hints.size() > 0) {
+//                mPaint.setColor(mHintCircleColor);
+//                int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
+//                int dayoffset = CalendarUtils.findDayOffset(CalendarUtils.getFirstDayWeek(mSelYear, mSelMonth));
+//                for (int day = 0; day < monthDays; day++) {
+//                    if (!hints.contains(day + 1)) continue;
+//                    int col = (day + dayoffset) % NUM_COLUMNS;
+//                    int row = (day + dayoffset) / NUM_COLUMNS;
+//                    float circleX = (float) (mColumnSize * col + mColumnSize * 0.5);
+//                    float circleY = (float) (mRowSize * row + mRowSize * 0.75);
+//                    canvas.drawCircle(circleX, circleY, mCircleRadius, mPaint);
+//                }
+//            }
         }
     }
 
@@ -487,6 +490,10 @@ public class MonthView extends BaseCalendarView {
         }
         setSelectYearMonth(year, month, day);
         invalidate();
+
+
+        // TODO: 18-5-22  cut for test 
+        initTaskHint();
     }
 
 

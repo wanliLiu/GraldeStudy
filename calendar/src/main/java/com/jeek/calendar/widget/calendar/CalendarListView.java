@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
 
     private calendarListAdapter mMonthAdapter;
     private OnCalendarClickListener mOnCalendarClickListener;
+    private LinearLayoutManager manager;
 
 
     public CalendarListView(Context context) {
@@ -42,11 +44,13 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
     }
 
     private void initMonthAdapter(Context context, TypedArray array) {
-        LinearLayoutManager manager = new LinearLayoutManager(context);
+        manager = new LinearLayoutManager(context);
         setLayoutManager(manager);
         mMonthAdapter = new calendarListAdapter(array, this);
         setAdapter(mMonthAdapter);
         scrollToPosition(mMonthAdapter.getItemCount() / 2);
+
+        addOnScrollListener(new scrollListener());
     }
 
     @Override
@@ -162,6 +166,26 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
      */
     public void setOnCalendarClickListener(OnCalendarClickListener onCalendarClickListener) {
         mOnCalendarClickListener = onCalendarClickListener;
+    }
+
+    /**
+     *
+     */
+    private class scrollListener extends RecyclerView.OnScrollListener {
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+//            if (newState == SCROLL_STATE_IDLE) {
+                Log.e("位置",manager.findFirstVisibleItemPosition() + "");
+//            }
+
+        }
     }
 
 }
