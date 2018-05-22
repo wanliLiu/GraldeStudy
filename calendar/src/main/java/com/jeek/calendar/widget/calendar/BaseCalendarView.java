@@ -100,7 +100,7 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
     // How long to wait after scroll stops before starting the loader
     // Using scroll duration because scroll state changes don't update
     // correctly when a scroll is triggered programmatically.
-    private static final int LOADER_DELAY = 200;
+    private static final int LOADER_DELAY = 100;
 
     public BaseCalendarView(Context context) {
         this(context, null);
@@ -571,7 +571,7 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         }
         log("Processed " + events.size() + " events.");
         mEventDayList = eventDayList;
-        invalidate();
+//        invalidate();
 //        requestLayout();
     }
 }

@@ -62,7 +62,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
 
     @Override
     public void onClickLastMonth(int year, int month, int day) {
-
+//        ((calendarListAdapter) getAdapter()).notifyItemChanged(year);
     }
 
     @Override
@@ -106,6 +106,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             viewHolder mholder = (viewHolder) holder;
             int date[] = getYearAndMonth(position);
+            mholder.monthView.setPosition(position);
             mholder.monthView.setShowSelect(false);
             mholder.monthView.setNeedPreNext(false);
             mholder.monthView.init(mArray, date[0], date[1]);
@@ -128,22 +129,22 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         public int getItemCount() {
             return mMonthCount;
         }
+    }
 
-        /**
-         *
-         */
-        private class viewHolder extends ViewHolder {
+    /**
+     *
+     */
+    private class viewHolder extends ViewHolder {
 
-            private MonthView monthView;
-            private TextView monthYear, monthYearToday;
+        private MonthView monthView;
+        private TextView monthYear, monthYearToday;
 
-            public viewHolder(View itemView) {
-                super(itemView);
-                monthView = itemView.findViewById(R.id.mcvCalendar);
-                monthYear = itemView.findViewById(R.id.monthYear);
-                monthYearToday = itemView.findViewById(R.id.monthYearToday);
-                monthYearToday.setVisibility(GONE);
-            }
+        public viewHolder(View itemView) {
+            super(itemView);
+            monthView = itemView.findViewById(R.id.mcvCalendar);
+            monthYear = itemView.findViewById(R.id.monthYear);
+            monthYearToday = itemView.findViewById(R.id.monthYearToday);
+            monthYearToday.setVisibility(GONE);
         }
     }
 
@@ -181,9 +182,18 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-//            if (newState == SCROLL_STATE_IDLE) {
-                Log.e("位置",manager.findFirstVisibleItemPosition() + "");
-//            }
+            if (newState == SCROLL_STATE_IDLE) {
+                int firstPos = manager.findFirstVisibleItemPosition();
+                int lastPos = manager.findLastVisibleItemPosition();
+                Log.e("位置", firstPos + "---" + lastPos);
+                for (int i = firstPos; i < lastPos; i++) {
+                    viewHolder holder = (viewHolder) findViewHolderForLayoutPosition(i);
+                    if (holder != null) {
+                        holder.monthView.startLoad();
+                    }
+                }
+
+            }
 
         }
     }

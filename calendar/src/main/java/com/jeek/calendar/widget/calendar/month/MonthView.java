@@ -528,5 +528,19 @@ public class MonthView extends BaseCalendarView {
         this.mDateClickListener = dateClickListener;
     }
 
+
+    private int position;
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    protected void setEvents(int firstJulianDay, int numDays, ArrayList<Event> events) {
+        super.setEvents(firstJulianDay, numDays, events);
+//        if (mDateClickListener != null) {
+//            mDateClickListener.onClickLastMonth(position, 0, 0);
+//        }
+    }
 }
 
