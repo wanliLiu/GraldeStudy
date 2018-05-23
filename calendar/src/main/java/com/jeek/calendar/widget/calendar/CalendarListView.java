@@ -44,7 +44,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         setLayoutManager(manager);
         calendarListAdapter mMonthAdapter = new calendarListAdapter(array, this);
         setAdapter(mMonthAdapter);
-        scrollToPosition(mMonthAdapter.getItemCount() / 2);
+        manager.scrollToPositionWithOffset(mMonthAdapter.getItemCount() / 2,60);
     }
 
     @Override
