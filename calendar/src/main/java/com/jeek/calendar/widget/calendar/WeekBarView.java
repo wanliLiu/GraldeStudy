@@ -40,7 +40,7 @@ public class WeekBarView extends View {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.WeekBarView);
         mWeekTextColor = array.getColor(R.styleable.WeekBarView_text_color, Color.parseColor("#4588E3"));
         mWeekSize = array.getDimensionPixelSize(R.styleable.WeekBarView_text_size, context.getResources().getDimensionPixelOffset(R.dimen.size_week_text_size));
-        mWeekString = context.getResources().getStringArray(CalendarUtils.weekStart == Calendar.MONDAY ? R.array.calendar_week_monday : R.array.calendar_week_sunday);
+        mWeekString = context.getResources().getStringArray(CalendarUtils.weekStart == Calendar.MONDAY ? R.array.calendar_week_monday : (CalendarUtils.weekStart == Calendar.SATURDAY ? R.array.calendar_week_saturday : R.array.calendar_week_sunday));
         array.recycle();
     }
 

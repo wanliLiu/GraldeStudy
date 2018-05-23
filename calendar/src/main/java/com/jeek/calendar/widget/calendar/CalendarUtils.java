@@ -23,7 +23,7 @@ import java.util.Map;
 public class CalendarUtils {
 
     /**
-     * 这个来改变是星期几还是，默认是星期一开始
+     * 这个来改变是星期几还是，默认是星期一开始  todo 这个可以根据情况，来自动用那个开始
      */
     public static int weekStart = Calendar.MONDAY;
     /**
@@ -153,7 +153,7 @@ public class CalendarUtils {
      * @return
      */
     public static int getMonthDays(int year, int month) {
-        LocalDate date = new LocalDate(year,month + 1,1);
+        LocalDate date = new LocalDate(year, month + 1, 1);
         return date.dayOfMonth().getMaximumValue();
     }
 

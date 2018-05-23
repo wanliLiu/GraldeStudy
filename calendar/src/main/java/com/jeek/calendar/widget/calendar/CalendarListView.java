@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,7 @@ import org.joda.time.DateTime;
  */
 public class CalendarListView extends RecyclerView implements OnMonthClickListener {
 
-    private calendarListAdapter mMonthAdapter;
     private OnCalendarClickListener mOnCalendarClickListener;
-    private LinearLayoutManager manager;
-
 
     public CalendarListView(Context context) {
         this(context, null);
@@ -44,13 +40,11 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
     }
 
     private void initMonthAdapter(Context context, TypedArray array) {
-        manager = new LinearLayoutManager(context);
+        LinearLayoutManager manager = new LinearLayoutManager(context);
         setLayoutManager(manager);
-        mMonthAdapter = new calendarListAdapter(array, this);
+        calendarListAdapter mMonthAdapter = new calendarListAdapter(array, this);
         setAdapter(mMonthAdapter);
         scrollToPosition(mMonthAdapter.getItemCount() / 2);
-
-        addOnScrollListener(new scrollListener());
     }
 
     @Override
@@ -62,7 +56,6 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
 
     @Override
     public void onClickLastMonth(int year, int month, int day) {
-//        ((calendarListAdapter) getAdapter()).notifyItemChanged(year);
     }
 
     @Override
@@ -96,6 +89,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
             return date;
         }
 
+
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -106,11 +100,10 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             viewHolder mholder = (viewHolder) holder;
             int date[] = getYearAndMonth(position);
-            mholder.monthView.setPosition(position);
             mholder.monthView.setShowSelect(false);
             mholder.monthView.setNeedPreNext(false);
             mholder.monthView.init(mArray, date[0], date[1]);
-            mholder.monthView.setId(position);
+            mholder.monthView.setPosition(position);
             mholder.monthView.invalidate();
             mholder.monthView.setOnDateClickListener(mMonthCalendarView);
 
@@ -122,7 +115,6 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
                 mholder.monthYearToday.setVisibility(GONE);
                 mholder.monthYear.setText(date[0] + "年" + (date[1] + 1) + "月");
             }
-
         }
 
         @Override
@@ -152,7 +144,7 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
      * 跳转到今天
      */
     public void setTodayToView() {
-        scrollToPosition(mMonthAdapter.getItemCount() / 2);
+        scrollToPosition(getAdapter().getItemCount() / 2);
 //        MonthView monthView = mMonthAdapter.getViews().get(mMonthAdapter.getMonthCount() / 2);
 //        if (monthView != null) {
 //            Calendar calendar = Calendar.getInstance();
@@ -168,34 +160,4 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
     public void setOnCalendarClickListener(OnCalendarClickListener onCalendarClickListener) {
         mOnCalendarClickListener = onCalendarClickListener;
     }
-
-    /**
-     *
-     */
-    private class scrollListener extends RecyclerView.OnScrollListener {
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-        }
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == SCROLL_STATE_IDLE) {
-                int firstPos = manager.findFirstVisibleItemPosition();
-                int lastPos = manager.findLastVisibleItemPosition();
-                Log.e("位置", firstPos + "---" + lastPos);
-                for (int i = firstPos; i < lastPos; i++) {
-                    viewHolder holder = (viewHolder) findViewHolderForLayoutPosition(i);
-                    if (holder != null) {
-                        holder.monthView.startLoad();
-                    }
-                }
-
-            }
-
-        }
-    }
-
 }

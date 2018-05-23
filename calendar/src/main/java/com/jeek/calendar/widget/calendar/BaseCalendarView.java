@@ -1,11 +1,7 @@
 package com.jeek.calendar.widget.calendar;
 
-import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -16,11 +12,14 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Instances;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -82,25 +81,10 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
     protected Bitmap mRestBitmap, mWorkBitmap;
 
     //-------------------------------------------------------------------------event--------------------------------------------------------------------------------
-    private CursorLoader mLoader;
-    private Uri mEventUri;
-    private volatile boolean mShouldLoad = true;
-    protected Handler mHandler;
-
-    private static final int LOADER_THROTTLE_DELAY = 500;
-
     private static final String WHERE_CALENDARS_VISIBLE = Calendars.VISIBLE + "=1";
     private static final String INSTANCES_SORT_ORDER = Instances.START_DAY + "," + Instances.START_MINUTE + "," + Instances.TITLE;
 
-
-    protected int mFirstJulianDay;
-    protected int mQueryDays;
     protected ArrayList<ArrayList<Event>> mEventDayList = new ArrayList<>();
-
-    // How long to wait after scroll stops before starting the loader
-    // Using scroll duration because scroll state changes don't update
-    // correctly when a scroll is triggered programmatically.
-    private static final int LOADER_DELAY = 100;
 
     public BaseCalendarView(Context context) {
         this(context, null);
@@ -119,6 +103,9 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
      *
      */
     protected void init(TypedArray array) {
+        Calendar calendar = Calendar.getInstance();
+        setSelectYearMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1);
+
         initAttrs(array);
         initGestureDetector();
         mRestBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_rest_day);
@@ -126,27 +113,7 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
 
         initPaint();
 
-        eventTypeInit();
     }
-
-    /**
-     *
-     */
-    protected void initTaskHint() {
-//        mEventDayList = new ArrayList<>();
-//        if (mIsShowHint) {
-//            startLoad();
-//        }
-    }
-
-    /**
-     *
-     */
-    private void eventTypeInit() {
-        mHandler = new Handler();
-        mLoader = (CursorLoader) ((Activity) getContext()).getLoaderManager().initLoader(0, null, this);
-    }
-
 
     /**
      *
@@ -281,16 +248,6 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
     }
 
     /**
-     *
-     */
-    protected void startLoad() {
-        mEventDayList = new ArrayList<>();
-        mHandler.removeCallbacks(mUpdateLoader);
-        mShouldLoad = true;
-        mHandler.postDelayed(mUpdateLoader, LOADER_DELAY);
-    }
-
-    /**
      * 获取当前选择年
      *
      * @return
@@ -384,24 +341,61 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
 
     //-------------------------------------------------------------------------event--------------------------------------------------------------------------------
 
+    /**
+     * 初始化 然后加载数据
+     *
+     * @param position
+     */
+    public void setPosition(int position) {
+        initTaskLoader(position);
+    }
 
     /**
-     * Updates the uri used by the loader according to the current position of
-     * the listview.
-     *
-     * @return The new Uri to use
+     * @return
      */
-    private Uri updateUri() {
+    private LoaderManager getLoadManager() {
+        return ((FragmentActivity) getContext()).getSupportLoaderManager();
+    }
+
+    /**
+     *
+     */
+    private void initTaskLoader(int position) {
+        getLoadManager().initLoader(position, null, this);
+        LoaderManager.enableDebugLogging(isDebug);
+    }
+
+    /**
+     * 之类重写获取相应的范围
+     *
+     * @return
+     */
+    private Uri getQeryRange() {
+        return updateUri(mSelYear, mSelMonth, 1, mSelYear, mSelMonth, CalendarUtils.getMonthDays(mSelYear, mSelMonth));
+    }
+
+    /**
+     * 获取要查询的范围
+     *
+     * @param startYear
+     * @param startMonh
+     * @param startDay
+     * @param endYear
+     * @param endMonth
+     * @param endDay
+     * @return
+     */
+    protected Uri updateUri(int startYear, int startMonh, int startDay, int endYear, int endMonth, int endDay) {
         Calendar temp = Calendar.getInstance();
         long start, end;
-        temp.set(mSelYear, mSelMonth, 1);
+        temp.set(startYear, startMonh, startDay);
         temp.set(Calendar.HOUR_OF_DAY, 0);
         temp.set(Calendar.MINUTE, 0);
         temp.set(Calendar.SECOND, 0);
         temp.set(Calendar.MILLISECOND, 0);
         start = temp.getTimeInMillis();
 
-        temp.set(mSelYear, mSelMonth, CalendarUtils.getMonthDays(mSelYear, mSelMonth));
+        temp.set(endYear, endMonth, endDay);
         temp.set(Calendar.HOUR_OF_DAY, 0);
         temp.set(Calendar.MINUTE, 0);
         temp.set(Calendar.SECOND, 0);
@@ -414,42 +408,8 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         ContentUris.appendId(builder, end);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-        log(builder.build().toString() + "--开始时间：" + sdf.format(new Date(start)) + "--结束时间：" + sdf.format(new Date(end)));
+        log("开始加载：" + sdf.format(new Date(start)) + "------" + sdf.format(new Date(end)) + "区间事件");
         return builder.build();
-    }
-
-    /**
-     *
-     */
-    private final Runnable mUpdateLoader = new Runnable() {
-        @Override
-        public void run() {
-            synchronized (this) {
-                if (!mShouldLoad || mLoader == null) {
-                    return;
-                }
-                // Stop any previous loads while we update the uri
-                stopLoader();
-
-                // Start the loader again
-                mEventUri = updateUri();
-
-                mLoader.setUri(mEventUri);
-                mLoader.startLoading();
-                mLoader.onContentChanged();
-                log("Started loader with uri: " + mEventUri);
-            }
-        }
-    };
-
-    private void stopLoader() {
-        synchronized (mUpdateLoader) {
-            mHandler.removeCallbacks(mUpdateLoader);
-            if (mLoader != null) {
-                mLoader.stopLoading();
-                log("Stopped loader from loading");
-            }
-        }
     }
 
     protected String updateWhere() {
@@ -461,31 +421,22 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         return where;
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader loader;
-        synchronized (mUpdateLoader) {
-            mEventUri = updateUri();
-            String where = updateWhere();
-
-            loader = new CursorLoader(getContext(), mEventUri, Event.EVENT_PROJECTION, where, null /* WHERE_CALENDARS_SELECTED_ARGS */, INSTANCES_SORT_ORDER);
-            loader.setUpdateThrottle(LOADER_THROTTLE_DELAY);
-        }
-        log("Returning new loader with uri: " + mEventUri);
-        return loader;
-    }
 
     /**
+     * @param uri
      * @return
      */
-    private int[] updateLoadedDays() {
-        List<String> pathSegments = mEventUri.getPathSegments();
+    private int[] updateLoadedDays(Uri uri) {
+        List<String> pathSegments = uri.getPathSegments();
         int size = pathSegments.size();
         if (size <= 2) {
             return new int[2];
         }
         long first = Long.parseLong(pathSegments.get(size - 2));
         long last = Long.parseLong(pathSegments.get(size - 1));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+        log("结束加载：" + sdf.format(new Date(first)) + "------" + sdf.format(new Date(last)) + "区间事件");
 
         int[] julian = new int[2];
         Time time = new Time();
@@ -497,25 +448,31 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         return julian;
     }
 
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader loader = new CursorLoader(getContext(), getQeryRange(), Event.EVENT_PROJECTION, updateWhere(), null /* WHERE_CALENDARS_SELECTED_ARGS */, INSTANCES_SORT_ORDER);
+//        loader.setUpdateThrottle(LOADER_THROTTLE_DELAY);
+        loader.startLoading();
+        return loader;
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        synchronized (mUpdateLoader) {
-            log("Found " + data.getCount() + " cursor entries for uri " + mEventUri);
-            CursorLoader cLoader = (CursorLoader) loader;
-            if (mEventUri == null) {
-                mEventUri = cLoader.getUri();
-            }
+        mEventDayList.clear();
 
-            if (cLoader.getUri().compareTo(mEventUri) != 0) {
-                // We've started a new query since this loader ran so ignore the
-                // result
-                return;
-            }
+        if (data != null && data.getCount() > 0) {
+            Uri uri = ((CursorLoader) loader).getUri();
+            int[] julian = updateLoadedDays(uri);
+            log("加载完成，总共有事件：" + data.getCount());
             ArrayList<Event> events = new ArrayList<>();
-            int[] julian = updateLoadedDays();
             Event.buildEventsFromCursor(events, data, getContext(), julian[0], julian[1]);
-            setEvents(julian[0], julian[1] - julian[0] + 1, events);
+            if (events.size() > 0)
+                setEvents(julian[0], julian[1] - julian[0] + 1, events);
         }
+
+        //update ui
+        invalidate();
     }
 
     @Override
@@ -529,28 +486,16 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
      * @param events
      */
     protected void setEvents(int firstJulianDay, int numDays, ArrayList<Event> events) {
-        mEventDayList = new ArrayList<>();
-
-        mFirstJulianDay = firstJulianDay;
-        mQueryDays = numDays;
         // Create a new list, this is necessary since the weeks are referencing
         // pieces of the old list
         ArrayList<ArrayList<Event>> eventDayList = new ArrayList<>();
         for (int i = 0; i < numDays; i++) {
             eventDayList.add(new ArrayList<Event>());
         }
-
-        if (events == null || events.size() == 0) {
-            log("No events. Returning early--go schedule something fun.");
-            mEventDayList = eventDayList;
-            invalidate();
-            return;
-        }
-
         // Compute the new set of days with events
         for (Event event : events) {
-            int startDay = event.startDay - mFirstJulianDay;
-            int endDay = event.endDay - mFirstJulianDay + 1;
+            int startDay = event.startDay - firstJulianDay;
+            int endDay = event.endDay - firstJulianDay + 1;
             if (startDay < numDays || endDay >= 0) {
                 if (startDay < 0) {
                     startDay = 0;
@@ -569,9 +514,7 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
                 }
             }
         }
-        log("Processed " + events.size() + " events.");
+        log("处理完成,对应到天的事件有：" + eventDayList.size());
         mEventDayList = eventDayList;
-//        invalidate();
-//        requestLayout();
     }
 }

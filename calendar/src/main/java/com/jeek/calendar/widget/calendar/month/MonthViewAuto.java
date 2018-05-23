@@ -82,7 +82,6 @@ public class MonthViewAuto extends BaseCalendarView {
         mHolidays = CalendarUtils.getInstance(getContext()).getHolidays(mSelYear, mSelMonth + 1);
 
         initMonth();
-        initTaskHint();
     }
 
     /**
@@ -378,9 +377,9 @@ public class MonthViewAuto extends BaseCalendarView {
      */
     private void drawHintCircle(Canvas canvas) {
         if (mIsShowHint) {
-            if (mEventDayList != null && mEventDayList.size() > 0) {
+            int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
+            if (mEventDayList != null && mEventDayList.size() > 0 && mEventDayList.size() == monthDays) {
                 mPaint.setColor(mHintCircleColor);
-                int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
                 int dayoffset = CalendarUtils.findDayOffset(CalendarUtils.getFirstDayWeek(mSelYear, mSelMonth));
                 for (int day = 0; day < monthDays; day++) {
                     ArrayList<Event> list = mEventDayList.get(day);

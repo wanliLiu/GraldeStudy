@@ -87,7 +87,6 @@ public class MonthView extends BaseCalendarView {
         mHolidays = CalendarUtils.getInstance(getContext()).getHolidays(mSelYear, mSelMonth + 1);
 
         initMonth();
-        initTaskHint();
     }
 
 
@@ -393,9 +392,9 @@ public class MonthView extends BaseCalendarView {
      */
     private void drawHintCircle(Canvas canvas) {
         if (mIsShowHint) {
-            if (mEventDayList != null && mEventDayList.size() > 0) {
+            int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
+            if (mEventDayList != null && mEventDayList.size() > 0 && mEventDayList.size() == monthDays) {
                 mPaint.setColor(mHintCircleColor);
-                int monthDays = CalendarUtils.getMonthDays(mSelYear, mSelMonth);
                 int dayoffset = CalendarUtils.findDayOffset(CalendarUtils.getFirstDayWeek(mSelYear, mSelMonth));
                 for (int day = 0; day < monthDays; day++) {
                     ArrayList<Event> list = mEventDayList.get(day);
@@ -490,10 +489,6 @@ public class MonthView extends BaseCalendarView {
         }
         setSelectYearMonth(year, month, day);
         invalidate();
-
-
-        // TODO: 18-5-22  cut for test 
-        initTaskHint();
     }
 
 
@@ -526,21 +521,6 @@ public class MonthView extends BaseCalendarView {
      */
     public void setOnDateClickListener(OnMonthClickListener dateClickListener) {
         this.mDateClickListener = dateClickListener;
-    }
-
-
-    private int position;
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    @Override
-    protected void setEvents(int firstJulianDay, int numDays, ArrayList<Event> events) {
-        super.setEvents(firstJulianDay, numDays, events);
-//        if (mDateClickListener != null) {
-//            mDateClickListener.onClickLastMonth(position, 0, 0);
-//        }
     }
 }
 

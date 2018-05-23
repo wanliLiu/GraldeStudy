@@ -4,15 +4,18 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.jeek.calendar.widget.calendar.BaseCalendarView;
 import com.jeek.calendar.widget.calendar.CalendarUtils;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.LunarCalendarUtils;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,20 +46,6 @@ public class WeekView extends BaseCalendarView {
     protected void init(TypedArray array) {
         super.init(array);
         init(array, new DateTime());
-    }
-
-    /**
-     * @param date
-     */
-    private void initTaskHint(DateTime date) {
-        if (mIsShowHint) {
-            // TODO: 18-5-9 添加数据   
-            // 从数据库中获取圆点提示数据
-            // TODO: 18-5-9 实际根据情况添加事件数据到 addTaskHints
-//            ScheduleDao dao = ScheduleDao.getInstance(getContext());
-//            if (CalendarUtils.getInstance(getContext()).getTaskHints(date.getYear(), date.getMonthOfYear() - 1).size() == 0)
-//                CalendarUtils.getInstance(getContext()).addTaskHints(date.getYear(), date.getMonthOfYear() - 1, dao.getTaskHintByMonth(mSelYear, mSelMonth));
-        }
     }
 
     /**
@@ -97,9 +86,14 @@ public class WeekView extends BaseCalendarView {
         } else {
             setSelectYearMonth(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1, mStartDate.getDayOfMonth());
         }
+    }
 
-        initTaskHint(mStartDate);
-        initTaskHint(endDate);
+
+    @Override
+    protected Uri updateUri(int startYear, int startMonh, int startDay, int endYear, int endMonth, int endDay) {
+        DateTime endDate = mStartDate.plusDays(6);
+        return super.updateUri(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1, mStartDate.getDayOfMonth(),
+                endDate.getYear(), endDate.getMonthOfYear() - 1, endDate.getDayOfMonth());
     }
 
     @Override
@@ -243,31 +237,56 @@ public class WeekView extends BaseCalendarView {
      */
     private void drawHintCircle(Canvas canvas) {
         if (mIsShowHint) {
-            mPaint.setColor(mHintCircleColor);
-            int startMonth = mStartDate.getMonthOfYear();
-            int endMonth = mStartDate.plusDays(NUM_COLUMNS).getMonthOfYear();
-            int startDay = mStartDate.getDayOfMonth();
-            if (startMonth == endMonth) {
-                List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1);
+            if (mEventDayList != null && mEventDayList.size() > 0 && mEventDayList.size() == NUM_COLUMNS) {
+                mPaint.setColor(mHintCircleColor);
                 for (int i = 0; i < NUM_COLUMNS; i++) {
-                    drawHintCircle(hints, startDay + i, i, canvas);
-                }
-            } else {
-                for (int i = 0; i < NUM_COLUMNS; i++) {
-                    List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1);
-                    List<Integer> nextHints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear());
-                    DateTime date = mStartDate.plusDays(i);
-                    int month = date.getMonthOfYear();
-                    if (month == startMonth) {
-                        drawHintCircle(hints, date.getDayOfMonth(), i, canvas);
-                    } else {
-                        drawHintCircle(nextHints, date.getDayOfMonth(), i, canvas);
-                    }
+                    ArrayList<Event> list = mEventDayList.get(i);
+                    if (list == null || list.size() == 0)
+                        continue;
+                    drawHintCircle(i, canvas);
                 }
             }
+//            mPaint.setColor(mHintCircleColor);
+//            int startMonth = mStartDate.getMonthOfYear();
+//            int endMonth = mStartDate.plusDays(NUM_COLUMNS).getMonthOfYear();
+//            int startDay = mStartDate.getDayOfMonth();
+//            if (startMonth == endMonth) {
+//                List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1);
+//                for (int i = 0; i < NUM_COLUMNS; i++) {
+//                    drawHintCircle(hints, startDay + i, i, canvas);
+//                }
+//            } else {
+//                for (int i = 0; i < NUM_COLUMNS; i++) {
+//                    List<Integer> hints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear() - 1);
+//                    List<Integer> nextHints = CalendarUtils.getInstance(getContext()).getTaskHints(mStartDate.getYear(), mStartDate.getMonthOfYear());
+//                    DateTime date = mStartDate.plusDays(i);
+//                    int month = date.getMonthOfYear();
+//                    if (month == startMonth) {
+//                        drawHintCircle(hints, date.getDayOfMonth(), i, canvas);
+//                    } else {
+//                        drawHintCircle(nextHints, date.getDayOfMonth(), i, canvas);
+//                    }
+//                }
+//            }
         }
     }
 
+    /**
+     * @param col
+     * @param canvas
+     */
+    private void drawHintCircle(int col, Canvas canvas) {
+        float circleX = (float) (mColumnSize * col + mColumnSize * 0.5);
+        float circleY = (float) (mRowSize * 0.75);
+        canvas.drawCircle(circleX, circleY, mCircleRadius, mPaint);
+    }
+
+    /**
+     * @param hints
+     * @param day
+     * @param col
+     * @param canvas
+     */
     private void drawHintCircle(List<Integer> hints, int day, int col, Canvas canvas) {
         if (!hints.contains(day)) return;
         float circleX = (float) (mColumnSize * col + mColumnSize * 0.5);

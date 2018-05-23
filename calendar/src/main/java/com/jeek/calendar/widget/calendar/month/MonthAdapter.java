@@ -43,7 +43,7 @@ public class MonthAdapter extends PagerAdapter {
             int date[] = getYearAndMonth(position);
             MonthViewAuto monthView = new MonthViewAuto(mContext);
             monthView.init(mArray, date[0], date[1]);
-            monthView.setId(position);
+            monthView.setPosition(position);
             monthView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             monthView.invalidate();
             monthView.setOnDateClickListener(mMonthCalendarView);
