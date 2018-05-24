@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.jeek.calendar.widget.calendar.month.MonthView;
 import com.jeek.calendar.widget.calendar.month.OnMonthClickListener;
 
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 /**
  * @author Soli
@@ -44,22 +47,23 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
         setLayoutManager(manager);
         calendarListAdapter mMonthAdapter = new calendarListAdapter(array, this);
         setAdapter(mMonthAdapter);
-        manager.scrollToPositionWithOffset(mMonthAdapter.getItemCount() / 2,60);
+        int _15dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources().getDisplayMetrics());
+        manager.scrollToPositionWithOffset(mMonthAdapter.getItemCount() / 2, _15dp);
     }
 
     @Override
-    public void onClickThisMonth(int year, int month, int day) {
+    public void onClickThisMonth(int year, int month, int day, ArrayList<Event> events) {
         if (mOnCalendarClickListener != null) {
-            mOnCalendarClickListener.onClickDate(year, month, day);
+            mOnCalendarClickListener.onClickDate(year, month, day, events);
         }
     }
 
     @Override
-    public void onClickLastMonth(int year, int month, int day) {
+    public void onClickLastMonth(int year, int month, int day, ArrayList<Event> events) {
     }
 
     @Override
-    public void onClickNextMonth(int year, int month, int day) {
+    public void onClickNextMonth(int year, int month, int day, ArrayList<Event> events) {
 
     }
 
@@ -150,6 +154,13 @@ public class CalendarListView extends RecyclerView implements OnMonthClickListen
 //            Calendar calendar = Calendar.getInstance();
 //            monthView.clickThisMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 //        }
+    }
+
+    /**
+     * 更新视图
+     */
+    public void updateUI() {
+        getAdapter().notifyDataSetChanged();
     }
 
     /**

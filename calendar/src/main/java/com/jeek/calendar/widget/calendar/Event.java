@@ -31,8 +31,10 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,6 +93,7 @@ public class Event implements Cloneable {
             Events.GUESTS_CAN_MODIFY,        // 18
             Instances.ALL_DAY + "=1 OR (" + Instances.END + "-" + Instances.BEGIN + ")>="
                     + DateUtils.DAY_IN_MILLIS + " AS " + DISPLAY_AS_ALLDAY, // 19
+            Events.DESCRIPTION, //20
     };
 
     // The indices for the projection array above.
@@ -113,6 +116,7 @@ public class Event implements Cloneable {
     private static final int PROJECTION_ORGANIZER_INDEX = 17;
     private static final int PROJECTION_GUESTS_CAN_INVITE_OTHERS_INDEX = 18;
     private static final int PROJECTION_DISPLAY_AS_ALLDAY = 19;
+    private static final int PROJECTION_DESCRIPTION = 20;
 
     static {
         if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
@@ -131,6 +135,8 @@ public class Event implements Cloneable {
     public String organizer;
     public boolean guestsCanModify;
 
+    private String status;
+
     public int startDay;       // start Julian day
     public int endDay;         // end Julian day
     public int startTime;      // Start and end time are in minutes since midnight
@@ -143,6 +149,10 @@ public class Event implements Cloneable {
 
     public boolean hasAlarm;
     public boolean isRepeating;
+    public String rrule;
+    public String rdate;
+
+    public String description;
 
     public int selfAttendeeStatus;
 
@@ -348,14 +358,15 @@ public class Event implements Cloneable {
 
     /**
      * Adds all the events from the cursors to the events list.
-     *  将光标中的所有事件添加到事件列表。
+     * 将光标中的所有事件添加到事件列表。
+     *
      * @param events   The list of events
      * @param cEvents  Events to add to the list
      * @param context
      * @param startDay
      * @param endDay
      */
-    public static void buildEventsFromCursor( ArrayList<Event> events, Cursor cEvents, Context context, int startDay, int endDay) {
+    public static void buildEventsFromCursor(ArrayList<Event> events, Cursor cEvents, Context context, int startDay, int endDay) {
         if (cEvents == null || events == null) {
             Log.e(TAG, "buildEventsFromCursor: null cursor or null events list!");
             return;
@@ -417,12 +428,14 @@ public class Event implements Cloneable {
         e.endTime = cEvents.getInt(PROJECTION_END_MINUTE_INDEX);
         e.endDay = cEvents.getInt(PROJECTION_END_DAY_INDEX);
 
+        e.description = cEvents.getString(PROJECTION_DESCRIPTION);
+
         e.hasAlarm = cEvents.getInt(PROJECTION_HAS_ALARM_INDEX) != 0;
 
         // Check if this is a repeating event
-        String rrule = cEvents.getString(PROJECTION_RRULE_INDEX);
-        String rdate = cEvents.getString(PROJECTION_RDATE_INDEX);
-        if (!TextUtils.isEmpty(rrule) || !TextUtils.isEmpty(rdate)) {
+        e.rrule = cEvents.getString(PROJECTION_RRULE_INDEX);
+        e.rdate = cEvents.getString(PROJECTION_RDATE_INDEX);
+        if (!TextUtils.isEmpty(e.rrule) || !TextUtils.isEmpty(e.rdate)) {
             e.isRepeating = true;
         } else {
             e.isRepeating = false;
@@ -442,12 +455,11 @@ public class Event implements Cloneable {
      * events that are displayed in a group. The width and position of each
      * rectangle depend on the maximum number of rectangles that occur at
      * the same time.
-     *
+     * <p>
      * 计算每个事件的位置。 每个事件显示为非重叠矩形。 对于正常事件，这些矩形显示在周视图和日视图中的单独列中。
      * 对于全天事件，这些矩形显示在顶部的单独行中。
      * 在这两种情况下，每个事件都分配有两个数字：N和Max，指定此事件是组中显示的最大事件数的第N个事件。
      * 每个矩形的宽度和位置取决于同时出现的矩形的最大数量。
-     *
      *
      * @param eventsList            the list of events, sorted into increasing time order
      *                              事件列表，按增加的时间顺序排序
@@ -664,5 +676,15 @@ public class Event implements Cloneable {
     public boolean drawAsAllday() {
         // Use >= so we'll pick up Exchange allday events
         return allDay || endMillis - startMillis >= DateUtils.DAY_IN_MILLIS;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getStartTimeStr() {
+        SimpleDateFormat st = new SimpleDateFormat("MM dd HH:mm");
+        SimpleDateFormat end = new SimpleDateFormat("- HH:mm");
+        return st.format(new Date(startMillis)) + end.format(new Date(endMillis));
     }
 }

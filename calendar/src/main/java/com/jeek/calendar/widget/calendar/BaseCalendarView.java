@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Instances;
 import android.support.annotation.Nullable;
@@ -41,7 +40,7 @@ import java.util.List;
  */
 public abstract class BaseCalendarView extends View implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final boolean isDebug = true;
+    private static final boolean isDebug = false;
 
     protected static final int NUM_COLUMNS = 7;
     protected static final int NUM_ROWS = 6;
@@ -81,8 +80,9 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
     protected Bitmap mRestBitmap, mWorkBitmap;
 
     //-------------------------------------------------------------------------event--------------------------------------------------------------------------------
-    private static final String WHERE_CALENDARS_VISIBLE = Calendars.VISIBLE + "=1";
-    private static final String INSTANCES_SORT_ORDER = Instances.START_DAY + "," + Instances.START_MINUTE + "," + Instances.TITLE;
+    private final int LOADER_THROTTLE_DELAY = 10;
+    private final String WHERE_CALENDARS_VISIBLE = Calendars.VISIBLE + "=1";
+    private final String INSTANCES_SORT_ORDER = Instances.START_DAY + "," + Instances.START_MINUTE + "," + Instances.TITLE;
 
     protected ArrayList<ArrayList<Event>> mEventDayList = new ArrayList<>();
 
@@ -403,7 +403,7 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         end = temp.getTimeInMillis();
 
         // Create a new uri with the updated times
-        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
+        Uri.Builder builder = Instances.CONTENT_URI.buildUpon();
         ContentUris.appendId(builder, start);
         ContentUris.appendId(builder, end);
 
@@ -516,5 +516,24 @@ public abstract class BaseCalendarView extends View implements LoaderManager.Loa
         }
         log("处理完成,对应到天的事件有：" + eventDayList.size());
         mEventDayList = eventDayList;
+    }
+
+    /**
+     * @param day monthview 0--day
+     *            weekview 0---6
+     * @return
+     */
+    protected ArrayList<Event> getDayEvents(int day) {
+        if (mEventDayList != null && mEventDayList.size() > 0 && day < mEventDayList.size()) {
+            return mEventDayList.get(day);
+        }
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    public ArrayList<Event> getDayEvents() {
+        return getDayEvents(getSelectDay());
     }
 }

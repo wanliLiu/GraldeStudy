@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.jeek.calendar.library.R;
 import com.jeek.calendar.widget.calendar.CalendarUtils;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.OnCalendarClickListener;
 import com.jeek.calendar.widget.calendar.month.MonthCalendarView;
 import com.jeek.calendar.widget.calendar.month.MonthViewAuto;
@@ -21,6 +22,7 @@ import com.jeek.calendar.widget.calendar.week.WeekView;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -130,7 +132,7 @@ public class ScheduleLayout extends FrameLayout {
 
     private OnCalendarClickListener mMonthCalendarClickListener = new OnCalendarClickListener() {
         @Override
-        public void onClickDate(int year, int month, int day) {
+        public void onClickDate(int year, int month, int day,ArrayList<Event> events) {
             wcvCalendar.setOnCalendarClickListener(null);
             int weeks = CalendarUtils.getWeeksAgo(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay, year, month, day);
             resetCurrentSelectDate(year, month, day);
@@ -143,7 +145,7 @@ public class ScheduleLayout extends FrameLayout {
         }
 
         @Override
-        public void onPageChange(int year, int month, int day) {
+        public void onPageChange(int year, int month, int day,ArrayList<Event> events) {
             computeCurrentRowsIsSix(year, month);
         }
     };
@@ -169,23 +171,26 @@ public class ScheduleLayout extends FrameLayout {
 
     private void resetWeekView(int position) {
         WeekView weekView = wcvCalendar.getCurrentWeekView();
+        ArrayList<Event> events = null;
         if (weekView != null) {
             weekView.setSelectYearMonth(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
             weekView.invalidate();
+            events = weekView.getDayEvents();
         } else {
             WeekView newWeekView = wcvCalendar.getWeekAdapter().instanceWeekView(position);
             newWeekView.setSelectYearMonth(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
             newWeekView.invalidate();
+            events = newWeekView.getDayEvents();
             wcvCalendar.setCurrentItem(position);
         }
         if (mOnCalendarClickListener != null) {
-            mOnCalendarClickListener.onClickDate(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
+            mOnCalendarClickListener.onClickDate(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay,events);
         }
     }
 
     private OnCalendarClickListener mWeekCalendarClickListener = new OnCalendarClickListener() {
         @Override
-        public void onClickDate(int year, int month, int day) {
+        public void onClickDate(int year, int month, int day, ArrayList<Event> events) {
             mcvCalendar.setOnCalendarClickListener(null);
             int months = CalendarUtils.getMonthsAgo(mCurrentSelectYear, mCurrentSelectMonth, year, month);
             resetCurrentSelectDate(year, month, day);
@@ -193,7 +198,7 @@ public class ScheduleLayout extends FrameLayout {
                 int position = mcvCalendar.getCurrentItem() + months;
                 mcvCalendar.setCurrentItem(position, false);
             }
-            resetMonthView();
+            resetMonthView(events);
             mcvCalendar.setOnCalendarClickListener(mMonthCalendarClickListener);
             if (mIsAutoChangeMonthRow) {
                 mCurrentRowsIsSix = CalendarUtils.getMonthRows(year, month) == 6;
@@ -201,7 +206,7 @@ public class ScheduleLayout extends FrameLayout {
         }
 
         @Override
-        public void onPageChange(int year, int month, int day) {
+        public void onPageChange(int year, int month, int day, ArrayList<Event> events) {
             if (mIsAutoChangeMonthRow) {
                 if (mCurrentSelectMonth != month) {
                     mCurrentRowsIsSix = CalendarUtils.getMonthRows(year, month) == 6;
@@ -210,14 +215,14 @@ public class ScheduleLayout extends FrameLayout {
         }
     };
 
-    private void resetMonthView() {
+    private void resetMonthView(ArrayList<Event> events) {
         MonthViewAuto monthView = mcvCalendar.getCurrentMonthView();
         if (monthView != null) {
             monthView.setSelectYearMonth(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
             monthView.invalidate();
         }
         if (mOnCalendarClickListener != null) {
-            mOnCalendarClickListener.onClickDate(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay);
+            mOnCalendarClickListener.onClickDate(mCurrentSelectYear, mCurrentSelectMonth, mCurrentSelectDay,events);
         }
         resetCalendarPosition();
     }

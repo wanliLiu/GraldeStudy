@@ -7,8 +7,10 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 
 import com.jeek.calendar.library.R;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.OnCalendarClickListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -40,14 +42,14 @@ public class MonthCalendarView extends ViewPager implements OnMonthClickListener
     }
 
     @Override
-    public void onClickThisMonth(int year, int month, int day) {
+    public void onClickThisMonth(int year, int month, int day, ArrayList<Event> events) {
         if (mOnCalendarClickListener != null) {
-            mOnCalendarClickListener.onClickDate(year, month, day);
+            mOnCalendarClickListener.onClickDate(year, month, day,events);
         }
     }
 
     @Override
-    public void onClickLastMonth(int year, int month, int day) {
+    public void onClickLastMonth(int year, int month, int day, ArrayList<Event> events) {
         MonthViewAuto monthDateView = mMonthAdapter.getViews().get(getCurrentItem() - 1);
         if (monthDateView != null) {
             monthDateView.setSelectYearMonth(year, month, day);
@@ -56,13 +58,13 @@ public class MonthCalendarView extends ViewPager implements OnMonthClickListener
     }
 
     @Override
-    public void onClickNextMonth(int year, int month, int day) {
+    public void onClickNextMonth(int year, int month, int day, ArrayList<Event> events) {
         MonthViewAuto monthDateView = mMonthAdapter.getViews().get(getCurrentItem() + 1);
         if (monthDateView != null) {
             monthDateView.setSelectYearMonth(year, month, day);
             monthDateView.invalidate();
         }
-        onClickThisMonth(year, month, day);
+        onClickThisMonth(year, month, day,events);
         setCurrentItem(getCurrentItem() + 1, true);
     }
 
@@ -77,7 +79,7 @@ public class MonthCalendarView extends ViewPager implements OnMonthClickListener
             if (monthView != null) {
                 monthView.clickThisMonth(monthView.getSelectYear(), monthView.getSelectMonth(), monthView.getSelectDay());
                 if (mOnCalendarClickListener != null) {
-                    mOnCalendarClickListener.onPageChange(monthView.getSelectYear(), monthView.getSelectMonth(), monthView.getSelectDay());
+                    mOnCalendarClickListener.onPageChange(monthView.getSelectYear(), monthView.getSelectMonth(), monthView.getSelectDay(),monthView.getDayEvents());
                 }
             } else {
                 MonthCalendarView.this.postDelayed(new Runnable() {

@@ -12,10 +12,12 @@ import android.widget.TextView;
 
 import com.jeek.calendar.R;
 import com.jeek.calendar.utils.DateUtils;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.OnCalendarClickListener;
 import com.jeek.calendar.widget.calendar.month.MonthCalendarView;
 import com.jeek.calendar.widget.calendar.month.MonthViewAuto;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -165,12 +167,12 @@ public class SelectDateDialog extends Dialog implements View.OnClickListener, On
     }
 
     @Override
-    public void onClickDate(int year, int month, int day) {
+    public void onClickDate(int year, int month, int day, ArrayList<Event> events) {
         setCurrentSelectDate(year, month, day);
     }
 
     @Override
-    public void onPageChange(int year, int month, int day) {
+    public void onPageChange(int year, int month, int day, ArrayList<Event> events) {
 
     }
 

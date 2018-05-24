@@ -315,7 +315,7 @@ public class WeekView extends BaseCalendarView {
      */
     public void clickThisWeek(int year, int month, int day) {
         if (mOnWeekClickListener != null) {
-            mOnWeekClickListener.onClickDate(year, month, day);
+            mOnWeekClickListener.onClickDate(year, month, day, getDayEvents(day));
         }
         setSelectYearMonth(year, month, day);
         invalidate();
@@ -333,5 +333,27 @@ public class WeekView extends BaseCalendarView {
         return mStartDate.plusDays(6);
     }
 
+    @Override
+    protected ArrayList<Event> getDayEvents(int day) {
+        if (mStartDate == null)
+            return null;
 
+        int index = 0;
+        for (; index < NUM_COLUMNS; index++) {
+            DateTime time = mStartDate.plusDays(index);
+            if (time.getDayOfMonth() == day)
+                break;
+        }
+
+        if (index == NUM_COLUMNS)
+            return null;
+
+        return super.getDayEvents(index);
+    }
+
+    @Override
+    protected void setEvents(int firstJulianDay, int numDays, ArrayList<Event> events) {
+        super.setEvents(firstJulianDay, numDays, events);
+        clickThisWeek(getSelectYear(), getSelectMonth(), getSelectDay());
+    }
 }

@@ -8,9 +8,12 @@ import android.util.SparseArray;
 
 import com.jeek.calendar.library.R;
 import com.jeek.calendar.widget.calendar.CalendarUtils;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.OnCalendarClickListener;
 
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jimmy on 2016/10/7 0007.
@@ -41,9 +44,9 @@ public class WeekCalendarView extends ViewPager implements OnWeekClickListener {
     }
 
     @Override
-    public void onClickDate(int year, int month, int day) {
+    public void onClickDate(int year, int month, int day, ArrayList<Event> events) {
         if (mOnCalendarClickListener != null) {
-            mOnCalendarClickListener.onClickDate(year, month, day);
+            mOnCalendarClickListener.onClickDate(year, month, day, events);
         }
     }
 
@@ -58,7 +61,7 @@ public class WeekCalendarView extends ViewPager implements OnWeekClickListener {
             WeekView weekView = mWeekAdapter.getViews().get(position);
             if (weekView != null) {
                 if (mOnCalendarClickListener != null) {
-                    mOnCalendarClickListener.onPageChange(weekView.getSelectYear(), weekView.getSelectMonth(), weekView.getSelectDay());
+                    mOnCalendarClickListener.onPageChange(weekView.getSelectYear(), weekView.getSelectMonth(), weekView.getSelectDay(), weekView.getDayEvents());
                 }
                 weekView.clickThisWeek(weekView.getSelectYear(), weekView.getSelectMonth(), weekView.getSelectDay());
             } else {
@@ -76,6 +79,13 @@ public class WeekCalendarView extends ViewPager implements OnWeekClickListener {
 
         }
     };
+
+    /**
+     * 更新视图
+     */
+    public void updateUI() {
+        getAdapter().notifyDataSetChanged();
+    }
 
     /**
      * 设置点击日期监听
@@ -100,6 +110,7 @@ public class WeekCalendarView extends ViewPager implements OnWeekClickListener {
 
     /**
      * 获取输入的年月到起始的位置
+     *
      * @param selectYear
      * @param selectMonth
      * @param selectDay

@@ -21,6 +21,7 @@ import com.jeek.calendar.adapter.ScheduleAdapter;
 import com.jeek.calendar.dialog.SelectDateDialog;
 import com.jeek.calendar.task.schedule.AddScheduleTask;
 import com.jeek.calendar.task.schedule.LoadScheduleTask;
+import com.jeek.calendar.widget.calendar.Event;
 import com.jeek.calendar.widget.calendar.OnCalendarClickListener;
 import com.jeek.calendar.widget.calendar.schedule.ScheduleLayout;
 import com.jeek.calendar.widget.calendar.schedule.ScheduleRecyclerView;
@@ -30,6 +31,7 @@ import com.jimmy.common.listener.OnTaskFinishedListener;
 import com.jimmy.common.util.DeviceUtils;
 import com.jimmy.common.util.ToastUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -92,13 +94,13 @@ public class ScheduleFragment extends BaseFragment implements OnCalendarClickLis
     }
 
     @Override
-    public void onClickDate(int year, int month, int day) {
+    public void onClickDate(int year, int month, int day, ArrayList<Event> events) {
         setCurrentSelectDate(year, month, day);
         resetScheduleList();
     }
 
     @Override
-    public void onPageChange(int year, int month, int day) {
+    public void onPageChange(int year, int month, int day, ArrayList<Event> events) {
 
     }
 

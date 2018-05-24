@@ -447,7 +447,7 @@ public class MonthView extends BaseCalendarView {
                     clickMonth = mSelMonth - 1;
                 }
                 if (isNeedPreNext && mDateClickListener != null) {
-                    mDateClickListener.onClickLastMonth(clickYear, clickMonth, mDaysText[row][column]);
+                    mDateClickListener.onClickLastMonth(clickYear, clickMonth, mDaysText[row][column],null);
                 }
             } else {
                 if (mDaysText[row][column] > 0)
@@ -467,7 +467,7 @@ public class MonthView extends BaseCalendarView {
                     clickMonth = mSelMonth + 1;
                 }
                 if (isNeedPreNext && mDateClickListener != null) {
-                    mDateClickListener.onClickNextMonth(clickYear, clickMonth, mDaysText[row][column]);
+                    mDateClickListener.onClickNextMonth(clickYear, clickMonth, mDaysText[row][column],null);
                 }
             } else {
                 if (mDaysText[row][column] > 0)
@@ -485,7 +485,7 @@ public class MonthView extends BaseCalendarView {
      */
     public void clickThisMonth(int year, int month, int day) {
         if (mDateClickListener != null) {
-            mDateClickListener.onClickThisMonth(year, month, day);
+            mDateClickListener.onClickThisMonth(year, month, day, getDayEvents(day - 1));
         }
         setSelectYearMonth(year, month, day);
         invalidate();
