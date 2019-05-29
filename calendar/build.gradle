@@ -23,6 +23,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':common')
     implementation "com.android.support:recyclerview-v7:${support_library_version}"
-    api 'com.google.code.gson:gson:+'
-    api 'joda-time:joda-time:+'
+    api 'com.google.code.gson:gson:2.8.5'
+    api 'joda-time:joda-time:2.10.2'
 }
